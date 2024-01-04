@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:hiragana_game/features/game/game_screen.dart';
+import 'package:silhouette_game/features/game/game_screen.dart';
 
 class TitleScreen extends StatelessWidget {
   const TitleScreen({super.key});

@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:hiragana_game/features/digital_ink_recognizer/digital_ink_recognizer.dart';
-import 'package:hiragana_game/features/game/handwritten_cell.dart';
-import 'package:hiragana_game/features/game/quiz/quiz.dart';
-import 'package:hiragana_game/features/game/written_characters.dart';
+import 'package:silhouette_game/features/digital_ink_recognizer/digital_ink_recognizer.dart';
+import 'package:silhouette_game/features/game/handwritten_cell.dart';
+import 'package:silhouette_game/features/game/quiz/quiz.dart';
+import 'package:silhouette_game/features/game/written_characters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

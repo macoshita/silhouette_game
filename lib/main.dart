@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hiragana_game/features/title/title_screen.dart';
+import 'package:silhouette_game/features/title/title_screen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {

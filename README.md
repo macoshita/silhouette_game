@@ -1,4 +1,4 @@
-# hiragana_game
+# silhouette_game
 
 A new Flutter project.
 

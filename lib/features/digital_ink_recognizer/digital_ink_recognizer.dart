@@ -1,6 +1,6 @@
 import 'package:google_mlkit_digital_ink_recognition/google_mlkit_digital_ink_recognition.dart'
     as r;
-import 'package:hiragana_game/features/game/time_series_offset.dart'
+import 'package:silhouette_game/features/game/time_series_offset.dart'
     show Character;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
