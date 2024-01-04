@@ -1,5 +1,5 @@
-import 'package:silhouette_game/features/game/time_series_offset.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:silhouette_game/features/handwritten_cell/time_series_offset.dart';
 
 part 'written_characters.g.dart';
 
