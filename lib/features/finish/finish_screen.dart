@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:silhouette_game/features/game/quiz/quiz.dart';
+import 'package:silhouette_game/features/quiz/quiz.dart';
 
 class FinishScreen extends HookConsumerWidget {
   const FinishScreen({super.key});

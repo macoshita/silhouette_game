@@ -6,9 +6,9 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silhouette_game/features/digital_ink_recognizer/digital_ink_recognizer.dart';
-import 'package:silhouette_game/features/game/quiz/quiz.dart';
 import 'package:silhouette_game/features/game/written_characters.dart';
 import 'package:silhouette_game/features/handwritten_cell/handwritten_cell.dart';
+import 'package:silhouette_game/features/quiz/quiz.dart';
 
 final _initializedProvider = FutureProvider.autoDispose((ref) {
   ref.invalidate(quizListProvider);
