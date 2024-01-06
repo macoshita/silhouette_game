@@ -130,12 +130,15 @@ class _WrittenCharacters extends HookConsumerWidget {
   }
 }
 
+final _correctProvider = StateProvider.autoDispose<bool?>((ref) => null);
+
 class _HandwrittenCell extends HookConsumerWidget {
   const _HandwrittenCell();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showHint = ref.watch(showHintProvider);
+    final correct = ref.watch(_correctProvider) ?? true;
     final debounce = useRef<Timer?>(null);
     final writingCellController = useMemoized(
       () => HandwrittenCellController(),
@@ -146,6 +149,8 @@ class _HandwrittenCell extends HookConsumerWidget {
       writingCellController.addListener(() {
         final character = writingCellController.value;
         ref.read(writtenCharactersProvider.notifier).write(character);
+        if (character.isEmpty) return;
+
         debounce.value?.cancel();
         debounce.value = Timer(const Duration(milliseconds: 700), () async {
           final quiz = ref.read(quizProvider).requireValue;
@@ -155,6 +160,7 @@ class _HandwrittenCell extends HookConsumerWidget {
             character,
             quiz.currentCharacter,
           );
+          ref.read(_correctProvider.notifier).state = isCorrect;
           if (!isCorrect) return;
 
           // 正しければ次の文字入力に移動
@@ -201,29 +207,44 @@ class _HandwrittenCell extends HookConsumerWidget {
           HandwrittenCell(
             controller: writingCellController,
           ),
-          Positioned(
-            bottom: -16,
-            right: -16,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black, width: 1),
-              ),
-              child: IconButton(
-                iconSize: 32,
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  writingCellController.reset();
-                },
-                icon: const Icon(Icons.delete),
-              ),
+          if (!correct)
+            Positioned(
+              bottom: -16,
+              right: -16,
+              child: _DeleteButton(writingCellController),
             ),
-          ),
         ],
       );
     });
+  }
+}
+
+class _DeleteButton extends HookConsumerWidget {
+  final HandwrittenCellController controller;
+
+  const _DeleteButton(this.controller);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.black, width: 1),
+      ),
+      child: IconButton(
+        iconSize: 32,
+        visualDensity: VisualDensity.compact,
+        onPressed: () {
+          controller.reset();
+          ref.read(_correctProvider.notifier).state = null;
+        },
+        icon: const Icon(
+          Icons.delete,
+          color: Colors.red,
+        ),
+      ),
+    );
   }
 }
 
