@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:silhouette_game/features/game/game_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class TitleScreen extends StatelessWidget {
   const TitleScreen({super.key});
@@ -22,11 +22,7 @@ class TitleScreen extends StatelessWidget {
             const Gap(16),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const GameScreen(),
-                    ),
-                  );
+                  context.go('/game');
                 },
                 style: ElevatedButton.styleFrom(
                   textStyle: theme.textTheme.titleLarge,

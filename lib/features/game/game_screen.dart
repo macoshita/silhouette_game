@@ -159,7 +159,6 @@ class _HandwrittenCell extends HookConsumerWidget {
           await showModalBottomSheet(
             context: context,
             barrierColor: Colors.transparent,
-            backgroundColor: theme.primaryColorLight,
             builder: (context) => _CorrectSheet(quiz.currentQuiz.word),
           );
           if (quizNotifier.nextWord()) {
