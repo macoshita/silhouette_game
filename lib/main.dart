@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silhouette_game/features/finish/finish_screen.dart';
 import 'package:silhouette_game/features/game/game_screen.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       title: 'hiragana game',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: GoogleFonts.bizUDPGothicTextTheme(),
         useMaterial3: true,
       ),
       routerConfig: _router,
