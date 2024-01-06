@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:silhouette_game/features/game_mode/game_mode.dart';
 
 part 'quiz.freezed.dart';
 part 'quiz.g.dart';
@@ -17,10 +18,20 @@ Future<List<QuizData>> quizList(QuizListRef ref) async {
       .where((p) => _quizPath.hasMatch(p))
       .toList()
     ..shuffle();
-  return qs
-      .sublist(0, 5)
-      .map((p) => (word: _quizPath.firstMatch(p)!.group(1)!, asset: p))
-      .toList();
+
+  final gameMode = ref.watch(gameModeProvider);
+  return qs.sublist(0, 5).map((p) {
+    var word = _quizPath.firstMatch(p)!.group(1)!;
+    if (gameMode == GameMode.katakana) {
+      word = _hiraganaToKatakana(word);
+    }
+    return (word: word, asset: p);
+  }).toList();
+}
+
+String _hiraganaToKatakana(val) {
+  return val.replaceAllMapped(RegExp("[ぁ-ゔ]"),
+      (Match m) => String.fromCharCode(m.group(0)!.codeUnitAt(0) + 0x60));
 }
 
 @freezed
