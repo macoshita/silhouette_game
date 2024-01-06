@@ -221,7 +221,7 @@ class _CorrectSheet extends HookConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Gap(16),
+          const Gap(32),
           Text("★せいかい★", style: theme.textTheme.headlineSmall),
           const Gap(16),
           Text(word, style: theme.textTheme.headlineLarge),
@@ -235,7 +235,7 @@ class _CorrectSheet extends HookConsumerWidget {
             ),
             child: const Text("つぎへ"),
           ),
-          const Gap(16),
+          const Gap(32),
         ],
       ),
     );
