@@ -63,20 +63,27 @@ class _Game extends HookConsumerWidget {
   }
 }
 
+final _maskedQuizImageProvider = StateProvider((ref) => true);
+
 class _QuizImage extends HookConsumerWidget {
   const _QuizImage();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final masked = ref.watch(_maskedQuizImageProvider);
     final quizImage =
         ref.watch(quizProvider.select((v) => v.requireValue.currentWordImage));
-    return ColorFiltered(
-      colorFilter: const ColorFilter.mode(
-        Colors.black,
-        BlendMode.srcATop,
-      ),
-      child: Image.asset(quizImage),
-    );
+    final imageWidget = Image.asset(quizImage);
+    if (masked) {
+      return ColorFiltered(
+        colorFilter: const ColorFilter.mode(
+          Colors.black,
+          BlendMode.srcATop,
+        ),
+        child: imageWidget,
+      );
+    }
+    return imageWidget;
   }
 }
 
@@ -147,6 +154,7 @@ class _HandwrittenCell extends HookConsumerWidget {
           }
 
           // すべての文字を入力したら正解演出を出して次の問題に進む
+          ref.read(_maskedQuizImageProvider.notifier).state = false;
           if (!context.mounted) return;
           await showModalBottomSheet(
             context: context,
@@ -154,14 +162,15 @@ class _HandwrittenCell extends HookConsumerWidget {
             backgroundColor: theme.primaryColorLight,
             builder: (context) => _CorrectSheet(quiz.currentWord),
           );
-          if (!context.mounted) return;
           if (quizNotifier.nextWord()) {
+            ref.read(_maskedQuizImageProvider.notifier).state = true;
             ref.invalidate(writtenCharactersProvider);
             writingCellController.reset();
             return;
           }
 
           // 最後の問題なら全問正解演出
+          if (!context.mounted) return;
           await showDialog(
             context: context,
             builder: (context) {
