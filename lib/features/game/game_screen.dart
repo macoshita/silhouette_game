@@ -4,21 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:silhouette_game/features/digital_ink_recognizer/digital_ink_recognizer.dart';
 import 'package:silhouette_game/features/game/quiz/quiz.dart';
 import 'package:silhouette_game/features/game/written_characters.dart';
 import 'package:silhouette_game/features/handwritten_cell/handwritten_cell.dart';
 
-part 'game_screen.g.dart';
-
-@riverpod
-Future<void> _initialized(_InitializedRef ref) async {
-  await Future.wait([
+final _initializedProvider = FutureProvider((ref) {
+  return Future.wait([
     ref.read(digitalInkRecognizerProvider.future),
     ref.read(quizProvider.future),
   ]);
-}
+});
 
 class GameScreen extends HookConsumerWidget {
   const GameScreen({super.key});
@@ -43,75 +39,6 @@ class _Game extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final debounce = useRef<Timer?>(null);
-    final writingCellController = useMemoized(
-      () => HandwrittenCellController(),
-      const [],
-    );
-
-    useEffect(() {
-      writingCellController.addListener(() {
-        final character = writingCellController.value;
-        ref.read(writtenCharactersProvider.notifier).write(character);
-        debounce.value?.cancel();
-        debounce.value = Timer(const Duration(seconds: 1), () async {
-          final quiz = ref.read(quizProvider).requireValue;
-
-          final isCorrect = await ref.read(recognizeProvider)(
-            character,
-            quiz.currentCharacter,
-          );
-          if (!context.mounted) return;
-          if (isCorrect) {
-            final quizNotifier = ref.read(quizProvider.notifier);
-            if (quizNotifier.nextCharacter()) {
-              ref.read(writtenCharactersProvider.notifier).next();
-              writingCellController.reset();
-              return;
-            }
-            await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text("正解！"),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("次へ"),
-                    ),
-                  ],
-                );
-              },
-            );
-            if (!context.mounted) return;
-            if (quizNotifier.nextWord()) {
-              ref.invalidate(writtenCharactersProvider);
-              writingCellController.reset();
-              return;
-            }
-            await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text("全問正解！"),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text("タイトルへ"),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        });
-      });
-      return;
-    }, const []);
 
     return SafeArea(
       child: Column(
@@ -128,9 +55,7 @@ class _Game extends HookConsumerWidget {
           const Gap(16),
           ConstrainedBox(
             constraints: BoxConstraints.loose(const Size.square(300)),
-            child: HandwrittenCell(
-              controller: writingCellController,
-            ),
+            child: const _HandwrittenCell(),
           ),
         ],
       ),
@@ -182,6 +107,143 @@ class _WrittenCharacters extends HookConsumerWidget {
           ),
         ]
       ],
+    );
+  }
+}
+
+class _HandwrittenCell extends HookConsumerWidget {
+  const _HandwrittenCell();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final debounce = useRef<Timer?>(null);
+    final writingCellController = useMemoized(
+      () => HandwrittenCellController(),
+      const [],
+    );
+
+    useEffect(() {
+      writingCellController.addListener(() {
+        final character = writingCellController.value;
+        ref.read(writtenCharactersProvider.notifier).write(character);
+        debounce.value?.cancel();
+        debounce.value = Timer(const Duration(milliseconds: 700), () async {
+          final quiz = ref.read(quizProvider).requireValue;
+
+          // 書いた文字が正しいかチェック
+          final isCorrect = await ref.read(recognizeProvider)(
+            character,
+            quiz.currentCharacter,
+          );
+          if (isCorrect) return;
+
+          // 正しければ次の文字入力に移動
+          final quizNotifier = ref.read(quizProvider.notifier);
+          if (quizNotifier.nextCharacter()) {
+            ref.read(writtenCharactersProvider.notifier).next();
+            writingCellController.reset();
+            return;
+          }
+
+          // すべての文字を入力したら正解演出を出して次の問題に進む
+          if (!context.mounted) return;
+          await showModalBottomSheet(
+            context: context,
+            barrierColor: Colors.transparent,
+            backgroundColor: theme.primaryColorLight,
+            builder: (context) => _CorrectSheet(quiz.currentWord),
+          );
+          if (!context.mounted) return;
+          if (quizNotifier.nextWord()) {
+            ref.invalidate(writtenCharactersProvider);
+            writingCellController.reset();
+            return;
+          }
+
+          // 最後の問題なら全問正解演出
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("全問正解！"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("タイトルへ"),
+                  ),
+                ],
+              );
+            },
+          );
+        });
+      });
+      return debounce.value?.cancel;
+    }, const []);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        HandwrittenCell(
+          controller: writingCellController,
+        ),
+        Positioned(
+          bottom: -16,
+          right: -16,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.black, width: 1),
+            ),
+            child: IconButton(
+              iconSize: 32,
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                writingCellController.reset();
+              },
+              icon: const Icon(Icons.delete),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CorrectSheet extends HookConsumerWidget {
+  const _CorrectSheet(this.word);
+
+  final String word;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Gap(16),
+          Text("★せいかい★", style: theme.textTheme.headlineSmall),
+          const Gap(16),
+          Text(word, style: theme.textTheme.headlineLarge),
+          const Gap(16),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: FilledButton.styleFrom(
+              textStyle: theme.textTheme.titleLarge,
+            ),
+            child: const Text("つぎへ"),
+          ),
+          const Gap(16),
+        ],
+      ),
     );
   }
 }
