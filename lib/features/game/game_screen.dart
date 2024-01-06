@@ -144,7 +144,7 @@ class _HandwrittenCell extends HookConsumerWidget {
             character,
             quiz.currentCharacter,
           );
-          if (isCorrect) return;
+          if (!isCorrect) return;
 
           // 正しければ次の文字入力に移動
           final quizNotifier = ref.read(quizProvider.notifier);
