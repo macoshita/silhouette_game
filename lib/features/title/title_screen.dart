@@ -20,14 +20,15 @@ class TitleScreen extends StatelessWidget {
               style: theme.textTheme.headlineLarge,
             ),
             const Gap(16),
-            ElevatedButton(
-                onPressed: () {
-                  context.go('/game');
-                },
-                style: ElevatedButton.styleFrom(
-                  textStyle: theme.textTheme.titleLarge,
-                ),
-                child: const Text('はじめる')),
+            FilledButton(
+              onPressed: () {
+                context.go('/game');
+              },
+              style: ElevatedButton.styleFrom(
+                textStyle: theme.textTheme.titleLarge,
+              ),
+              child: const Text('はじめる'),
+            ),
           ],
         ),
       ),

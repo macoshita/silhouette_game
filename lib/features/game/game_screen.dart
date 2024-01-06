@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silhouette_game/features/digital_ink_recognizer/digital_ink_recognizer.dart';
 import 'package:silhouette_game/features/game/quiz/quiz.dart';
@@ -10,6 +11,7 @@ import 'package:silhouette_game/features/game/written_characters.dart';
 import 'package:silhouette_game/features/handwritten_cell/handwritten_cell.dart';
 
 final _initializedProvider = FutureProvider((ref) {
+  ref.invalidate(quizListProvider);
   return Future.wait([
     ref.read(digitalInkRecognizerProvider.future),
     ref.read(quizProvider.future),
@@ -123,7 +125,6 @@ class _HandwrittenCell extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final debounce = useRef<Timer?>(null);
     final writingCellController = useMemoized(
       () => HandwrittenCellController(),
@@ -170,22 +171,7 @@ class _HandwrittenCell extends HookConsumerWidget {
 
           // 最後の問題なら全問正解演出
           if (!context.mounted) return;
-          await showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text("全問正解！"),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("タイトルへ"),
-                  ),
-                ],
-              );
-            },
-          );
+          context.go('/finish');
         });
       });
       return debounce.value?.cancel;

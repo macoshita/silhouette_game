@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:silhouette_game/features/finish/finish_screen.dart';
 import 'package:silhouette_game/features/game/game_screen.dart';
 import 'package:silhouette_game/features/title/title_screen.dart';
 
@@ -17,6 +18,10 @@ final _router = GoRouter(
     GoRoute(
       path: '/game',
       builder: (context, state) => const GameScreen(),
+    ),
+    GoRoute(
+      path: '/finish',
+      builder: (context, state) => const FinishScreen(),
     ),
   ],
 );
