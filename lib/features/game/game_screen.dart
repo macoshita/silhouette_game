@@ -10,7 +10,7 @@ import 'package:silhouette_game/features/game/quiz/quiz.dart';
 import 'package:silhouette_game/features/game/written_characters.dart';
 import 'package:silhouette_game/features/handwritten_cell/handwritten_cell.dart';
 
-final _initializedProvider = FutureProvider((ref) {
+final _initializedProvider = FutureProvider.autoDispose((ref) {
   ref.invalidate(quizListProvider);
   return Future.wait([
     ref.read(digitalInkRecognizerProvider.future),
@@ -65,7 +65,7 @@ class _Game extends HookConsumerWidget {
   }
 }
 
-final _maskedQuizImageProvider = StateProvider((ref) => true);
+final _maskedQuizImageProvider = StateProvider.autoDispose((ref) => true);
 
 class _QuizImage extends HookConsumerWidget {
   const _QuizImage();
