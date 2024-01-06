@@ -72,7 +72,7 @@ class _QuizImage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final masked = ref.watch(_maskedQuizImageProvider);
     final quizImage =
-        ref.watch(quizProvider.select((v) => v.requireValue.currentWordImage));
+        ref.watch(quizProvider.select((v) => v.requireValue.currentQuiz.asset));
     final imageWidget = Image.asset(quizImage);
     if (masked) {
       return ColorFiltered(
@@ -96,7 +96,7 @@ class _WrittenCharacters extends HookConsumerWidget {
       currentWord,
       currentCharacterIndex,
     ) = ref.watch(quizProvider.select((v) => (
-          v.requireValue.currentWord,
+          v.requireValue.currentQuiz.word,
           v.requireValue.currentCharacterIndex,
         )));
     final writtenCharacters = ref.watch(writtenCharactersProvider);
@@ -160,7 +160,7 @@ class _HandwrittenCell extends HookConsumerWidget {
             context: context,
             barrierColor: Colors.transparent,
             backgroundColor: theme.primaryColorLight,
-            builder: (context) => _CorrectSheet(quiz.currentWord),
+            builder: (context) => _CorrectSheet(quiz.currentQuiz.word),
           );
           if (quizNotifier.nextWord()) {
             ref.read(_maskedQuizImageProvider.notifier).state = true;

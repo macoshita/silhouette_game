@@ -16,7 +16,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$QuizState {
-  List<String> get words => throw _privateConstructorUsedError;
+  List<({String asset, String word})> get quizData =>
+      throw _privateConstructorUsedError;
   int get currentWordIndex => throw _privateConstructorUsedError;
   int get currentCharacterIndex => throw _privateConstructorUsedError;
 
@@ -31,7 +32,9 @@ abstract class $QuizStateCopyWith<$Res> {
       _$QuizStateCopyWithImpl<$Res, QuizState>;
   @useResult
   $Res call(
-      {List<String> words, int currentWordIndex, int currentCharacterIndex});
+      {List<({String asset, String word})> quizData,
+      int currentWordIndex,
+      int currentCharacterIndex});
 }
 
 /// @nodoc
@@ -47,15 +50,15 @@ class _$QuizStateCopyWithImpl<$Res, $Val extends QuizState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? words = null,
+    Object? quizData = null,
     Object? currentWordIndex = null,
     Object? currentCharacterIndex = null,
   }) {
     return _then(_value.copyWith(
-      words: null == words
-          ? _value.words
-          : words // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      quizData: null == quizData
+          ? _value.quizData
+          : quizData // ignore: cast_nullable_to_non_nullable
+              as List<({String asset, String word})>,
       currentWordIndex: null == currentWordIndex
           ? _value.currentWordIndex
           : currentWordIndex // ignore: cast_nullable_to_non_nullable
@@ -77,7 +80,9 @@ abstract class _$$QuizStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<String> words, int currentWordIndex, int currentCharacterIndex});
+      {List<({String asset, String word})> quizData,
+      int currentWordIndex,
+      int currentCharacterIndex});
 }
 
 /// @nodoc
@@ -91,15 +96,15 @@ class __$$QuizStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? words = null,
+    Object? quizData = null,
     Object? currentWordIndex = null,
     Object? currentCharacterIndex = null,
   }) {
     return _then(_$QuizStateImpl(
-      words: null == words
-          ? _value._words
-          : words // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      quizData: null == quizData
+          ? _value._quizData
+          : quizData // ignore: cast_nullable_to_non_nullable
+              as List<({String asset, String word})>,
       currentWordIndex: null == currentWordIndex
           ? _value.currentWordIndex
           : currentWordIndex // ignore: cast_nullable_to_non_nullable
@@ -116,18 +121,18 @@ class __$$QuizStateImplCopyWithImpl<$Res>
 
 class _$QuizStateImpl extends _QuizState {
   const _$QuizStateImpl(
-      {required final List<String> words,
+      {required final List<({String asset, String word})> quizData,
       required this.currentWordIndex,
       required this.currentCharacterIndex})
-      : _words = words,
+      : _quizData = quizData,
         super._();
 
-  final List<String> _words;
+  final List<({String asset, String word})> _quizData;
   @override
-  List<String> get words {
-    if (_words is EqualUnmodifiableListView) return _words;
+  List<({String asset, String word})> get quizData {
+    if (_quizData is EqualUnmodifiableListView) return _quizData;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_words);
+    return EqualUnmodifiableListView(_quizData);
   }
 
   @override
@@ -137,7 +142,7 @@ class _$QuizStateImpl extends _QuizState {
 
   @override
   String toString() {
-    return 'QuizState(words: $words, currentWordIndex: $currentWordIndex, currentCharacterIndex: $currentCharacterIndex)';
+    return 'QuizState(quizData: $quizData, currentWordIndex: $currentWordIndex, currentCharacterIndex: $currentCharacterIndex)';
   }
 
   @override
@@ -145,7 +150,7 @@ class _$QuizStateImpl extends _QuizState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$QuizStateImpl &&
-            const DeepCollectionEquality().equals(other._words, _words) &&
+            const DeepCollectionEquality().equals(other._quizData, _quizData) &&
             (identical(other.currentWordIndex, currentWordIndex) ||
                 other.currentWordIndex == currentWordIndex) &&
             (identical(other.currentCharacterIndex, currentCharacterIndex) ||
@@ -155,7 +160,7 @@ class _$QuizStateImpl extends _QuizState {
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_words),
+      const DeepCollectionEquality().hash(_quizData),
       currentWordIndex,
       currentCharacterIndex);
 
@@ -168,13 +173,13 @@ class _$QuizStateImpl extends _QuizState {
 
 abstract class _QuizState extends QuizState {
   const factory _QuizState(
-      {required final List<String> words,
+      {required final List<({String asset, String word})> quizData,
       required final int currentWordIndex,
       required final int currentCharacterIndex}) = _$QuizStateImpl;
   const _QuizState._() : super._();
 
   @override
-  List<String> get words;
+  List<({String asset, String word})> get quizData;
   @override
   int get currentWordIndex;
   @override

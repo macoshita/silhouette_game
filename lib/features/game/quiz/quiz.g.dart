@@ -6,11 +6,11 @@ part of 'quiz.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$quizListHash() => r'bd7aa7abdab58dbab7809a64eac11979e42c6e78';
+String _$quizListHash() => r'c6f92d84fde84e2d68e5520dfe3a1516dab6f044';
 
 /// See also [quizList].
 @ProviderFor(quizList)
-final quizListProvider = FutureProvider<List<String>>.internal(
+final quizListProvider = FutureProvider<List<QuizData>>.internal(
   quizList,
   name: r'quizListProvider',
   debugGetCreateSourceHash:
@@ -19,8 +19,8 @@ final quizListProvider = FutureProvider<List<String>>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef QuizListRef = FutureProviderRef<List<String>>;
-String _$quizHash() => r'f75bab7b15ada838f167fb528c77fac9e65856f1';
+typedef QuizListRef = FutureProviderRef<List<QuizData>>;
+String _$quizHash() => r'29d73c5df0af1099406cf3a9e1b01853fd8230e1';
 
 /// See also [Quiz].
 @ProviderFor(Quiz)
