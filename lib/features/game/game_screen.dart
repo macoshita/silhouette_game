@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:silhouette_game/features/digital_ink_recognizer/digital_ink_recognizer.dart';
 import 'package:silhouette_game/features/game/written_characters.dart';
 import 'package:silhouette_game/features/handwritten_cell/handwritten_cell.dart';
+import 'package:silhouette_game/features/hint/hint.dart';
 import 'package:silhouette_game/features/quiz/quiz.dart';
 
 final _initializedProvider = FutureProvider.autoDispose((ref) {
@@ -49,8 +50,17 @@ class _Game extends HookConsumerWidget {
           Text("だ〜れだ？", style: theme.textTheme.headlineLarge),
           const Gap(8),
           const SizedBox(
+            width: 300,
             height: 300,
-            child: _QuizImage(),
+            child: Stack(
+              children: [
+                _QuizImage(),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: HintIcon(),
+                ),
+              ],
+            ),
           ),
           const Gap(8),
           const _WrittenCharacters(),
@@ -125,6 +135,7 @@ class _HandwrittenCell extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final showHint = ref.watch(showHintProvider);
     final debounce = useRef<Timer?>(null);
     final writingCellController = useMemoized(
       () => HandwrittenCellController(),
@@ -147,6 +158,7 @@ class _HandwrittenCell extends HookConsumerWidget {
           if (!isCorrect) return;
 
           // 正しければ次の文字入力に移動
+          ref.read(showHintProvider.notifier).state = false;
           final quizNotifier = ref.read(quizProvider.notifier);
           if (quizNotifier.nextCharacter()) {
             ref.read(writtenCharactersProvider.notifier).next();
@@ -177,34 +189,41 @@ class _HandwrittenCell extends HookConsumerWidget {
       return debounce.value?.cancel;
     }, const []);
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        HandwrittenCell(
-          controller: writingCellController,
-        ),
-        Positioned(
-          bottom: -16,
-          right: -16,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.black, width: 1),
+    return LayoutBuilder(builder: (context, constraints) {
+      return Stack(
+        clipBehavior: Clip.none,
+        alignment: AlignmentDirectional.center,
+        children: [
+          if (showHint)
+            Center(
+              child: Hint(constraints.maxHeight / 1.5),
             ),
-            child: IconButton(
-              iconSize: 32,
-              visualDensity: VisualDensity.compact,
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                writingCellController.reset();
-              },
-              icon: const Icon(Icons.delete),
+          HandwrittenCell(
+            controller: writingCellController,
+          ),
+          Positioned(
+            bottom: -16,
+            right: -16,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.black, width: 1),
+              ),
+              child: IconButton(
+                iconSize: 32,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  writingCellController.reset();
+                },
+                icon: const Icon(Icons.delete),
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }
 
